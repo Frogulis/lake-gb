@@ -128,13 +128,7 @@ void moveActor(uint8_t speed, Actor *a)
     move_sprite(a->spriteID, a->x, a->y);
 }
 
-void main(){
-    uint16_t seed = LY_REG;
-    seed |= (uint16_t)DIV_REG << 8;
-    initrand(seed);
-    UINT8 r = ((uint8_t)rand()) % (uint8_t)2;
-            printf("%d", r);
-
+void runGame() {
     /* load sprites */
     set_sprite_data(0, 10, TileLabel); 
 
@@ -182,9 +176,9 @@ void main(){
     uint16_t score = 0;
 
     Pearl pearl;
-    pearl.x = 50;
-    pearl.y = 50;
     pearl.spriteID = 7;
+    pearl.x = ((uint8_t)rand()) % (uint8_t)130 + 20;
+    pearl.y = ((uint8_t)rand()) % (uint8_t)110 + 20;
     move_sprite(pearl.spriteID, pearl.x, pearl.y);
 
     /* setup AI */
@@ -256,7 +250,6 @@ void main(){
         }
 
         if (player.x + 5 >= pearl.x && player.x <= pearl.x + 5 && player.y + 5 >= pearl.y && player.y <= pearl.y + 5) {
-            // pearl.x = ((pearl.x + 350) % 152) + 8;
             pearl.x = ((uint8_t)rand()) % (uint8_t)130 + 20;
             pearl.y = ((uint8_t)rand()) % (uint8_t)110 + 20;
             move_sprite(pearl.spriteID, pearl.x, pearl.y);
@@ -281,5 +274,23 @@ void main(){
         moveActor(2, &player);
     }
 
-    printf("Game over! Your score is %u!", score);
+    HIDE_SPRITES;
+    printf("Game over!\nYour score is %u!\n", score);
+}
+
+void main(){
+    printf("Press START to begin");
+    waitpad(J_START);
+
+    uint16_t seed = LY_REG;
+    seed |= (uint16_t)DIV_REG << 8;
+    initrand(seed);
+    UINT8 r = ((uint8_t)rand()) % (uint8_t)2;
+            printf("%d", r);
+
+    while (1) {
+        runGame();
+        printf("Press START to try again.");
+        waitpad(J_START);
+    }
 }
