@@ -130,7 +130,7 @@ void moveActor(uint8_t speed, Actor *a)
 
 void runGame() {
     /* load sprites */
-    set_sprite_data(0, 20, TileLabel); 
+    set_sprite_data(0, 21, TileLabel); 
 
     set_sprite_tile(0, 0); // boat
 
@@ -160,6 +160,11 @@ void runGame() {
     move_sprite(9, 130, 130);
     move_sprite(10, 138, 130);
     set_sprite_tile(10, NUMERAL_0);
+
+    set_sprite_tile(11, 20); // fuel sprite
+    move_sprite(11, 10, 130);
+    set_sprite_tile(12, NUMERAL_0); // fuel digit
+    move_sprite(12, 18, 130);
     SHOW_SPRITES;
 
     /* load background and spread it across the whole back */
@@ -189,6 +194,7 @@ void runGame() {
     player.isActive = 1;
     move_sprite(player.spriteID, player.x, player.y);
     uint16_t score = 0;
+    uint8_t fuel = 99;
 
     Pearl pearl;
     pearl.spriteID = 7;
@@ -258,6 +264,26 @@ void runGame() {
             player.dir = 4;
         }
 
+        uint8_t boostSpeed = 0;
+        if (keys & J_A) {
+            if (fuel > 3) {
+                fuel -= 4;
+                boostSpeed = 1;
+            }
+            else {
+                fuel = 0;
+            }
+        }
+        else {
+            if (fuel < 98) {
+                fuel += 2;
+            }
+            else {
+                fuel = 99;
+            }
+        }
+        set_sprite_tile(12, NUMERAL_0 + (fuel / 10 % 10));
+
         if ((player.x + 3 >= squid1.x && player.x <= squid1.x + 3 && player.y + 3 >= squid1.y && player.y <= squid1.y + 3) ||
             (player.x + 3 >= squid2.x && player.x <= squid2.x + 3 && player.y + 3 >= squid2.y && player.y <= squid2.y + 3) ||
             (squid3.isActive && player.x + 3 >= squid3.x && player.x <= squid3.x + 3 && player.y + 3 >= squid3.y && player.y <= squid3.y + 3)) {
@@ -291,7 +317,7 @@ void runGame() {
         }
         moveActor(1 + goFast, &squid2);
         moveActor(1 + goFast, &squid3);
-        moveActor(2, &player);
+        moveActor(2 + boostSpeed, &player);
     }
 
     HIDE_SPRITES;
