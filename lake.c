@@ -130,7 +130,7 @@ void moveActor(uint8_t speed, Actor *a)
 
 void runGame() {
     /* load sprites */
-    set_sprite_data(0, 10, TileLabel); 
+    set_sprite_data(0, 20, TileLabel); 
 
     set_sprite_tile(0, 0); // boat
 
@@ -145,6 +145,21 @@ void runGame() {
     set_sprite_tile(8, 7);
 
     set_sprite_tile(7, 9); // pearl
+
+    const uint8_t NUMERAL_0 = 10;
+    const uint8_t NUMERAL_1 = 11;
+    const uint8_t NUMERAL_2 = 12;
+    const uint8_t NUMERAL_3 = 13;
+    const uint8_t NUMERAL_4 = 14;
+    const uint8_t NUMERAL_5 = 15;
+    const uint8_t NUMERAL_6 = 16;
+    const uint8_t NUMERAL_7 = 17;
+    const uint8_t NUMERAL_8 = 18;
+    const uint8_t NUMERAL_9 = 19;
+    set_sprite_tile(9, NUMERAL_0); // score digits
+    move_sprite(9, 130, 130);
+    move_sprite(10, 138, 130);
+    set_sprite_tile(10, NUMERAL_0);
     SHOW_SPRITES;
 
     /* load background and spread it across the whole back */
@@ -252,9 +267,14 @@ void runGame() {
         if (player.x + 5 >= pearl.x && player.x <= pearl.x + 5 && player.y + 5 >= pearl.y && player.y <= pearl.y + 5) {
             pearl.x = ((uint8_t)rand()) % (uint8_t)130 + 20;
             pearl.y = ((uint8_t)rand()) % (uint8_t)110 + 20;
+
             move_sprite(pearl.spriteID, pearl.x, pearl.y);
             score += 1;
-            if (score == 10) {
+
+            set_sprite_tile( 9, NUMERAL_0 + (score / 10 % 10));
+            set_sprite_tile(10, NUMERAL_0 + (score % 10));
+
+            if (score == 15) {
                 squid3.isActive = 1;
             }
         }
